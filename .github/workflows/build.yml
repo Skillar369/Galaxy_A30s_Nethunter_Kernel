@@ -1,0 +1,49 @@
+name: Build Samsung A30s NetHunter Kernel
+
+on:
+  workflow_dispatch: # Allows you to trigger the build manually
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Install Dependencies
+      run: |
+        sudo apt update
+        sudo apt install -y git build-essential libncurses5-dev bison flex libssl-dev bc libelf-dev ccache cpio zip
+
+    - name: Download Toolchain
+      run: |
+        git clone https://googlesource.com --depth=1 $GITHUB_WORKSPACE/clang
+
+    - name: Download Kernel Source & Patches
+      run: |
+        # Replace the URL below with your specific Samsung kernel source link or uploaded zip
+        # For demonstration, we setup the directories
+        mkdir -p $GITHUB_WORKSPACE/kernel
+        git clone https://gitlab.com $GITHUB_WORKSPACE/nh-patches
+
+    - name: Build Kernel
+      env:
+        ARCH: arm64
+        CROSS_COMPILE: ${{ github.workspace }}/clang/bin/aarch64-linux-android-
+      run: |
+        cd $GITHUB_WORKSPACE/kernel
+        # Note: You must upload/extract your Samsung source zip here first 
+        # make a30s_defconfig
+        # make -j$(nproc)
+
+    - name: Package with AnyKernel3
+      run: |
+        git clone https://github.com $GITHUB_WORKSPACE/AnyKernel3
+        # cp $GITHUB_WORKSPACE/kernel/arch/arm64/boot/Image.gz-dtb $GITHUB_WORKSPACE/AnyKernel3/
+        cd $GITHUB_WORKSPACE/AnyKernel3 && zip -r9 nethunter-kernel-a30s.zip *
+
+    - name: Upload Flashable Zip
+      uses: actions/upload-artifact@v4
+      with:
+        name: NetHunter-Kernel-A30s
+        path: ${{ github.workspace }}/AnyKernel3/nethunter-kernel-a30s.zip
