@@ -26,22 +26,21 @@ jobs:
 
       
 
-    - name: Download Kernel Source & Patches
+    - name: Download Toolchain
       run: |
-        # Replace the URL below with your specific Samsung kernel source link or uploaded zip
-        # For demonstration, we setup the directories
-        mkdir -p $GITHUB_WORKSPACE/kernel
-        git clone https://gitlab.com $GITHUB_WORKSPACE/nh-patches
+        # Download Proton Clang (highly stable for Android 4.14/4.19 Kernels)
+        git clone https://github.com --depth=1 $GITHUB_WORKSPACE/clang
 
     - name: Build Kernel
       env:
         ARCH: arm64
-        CROSS_COMPILE: ${{ github.workspace }}/clang/bin/aarch64-linux-android-
+        CC: clang
+        CROSS_COMPILE: ${{ github.workspace }}/clang/bin/aarch64-linux-gnu-
+        CROSS_COMPILE_ARM32: ${{ github.workspace }}/clang/bin/arm-linux-gnueabi-
       run: |
         cd $GITHUB_WORKSPACE/kernel
-        # Note: You must upload/extract your Samsung source zip here first 
-        # make a30s_defconfig
-        # make -j$(nproc)
+        make exynos7904_defconfig && make -j$(nproc)
+
 
     - name: Package with AnyKernel3
       run: |
