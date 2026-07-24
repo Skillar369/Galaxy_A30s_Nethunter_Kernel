@@ -17,7 +17,14 @@ jobs:
 
     - name: Download Toolchain
       run: |
-        git clone https://googlesource.com --depth=1 $GITHUB_WORKSPACE/clang
+        mkdir -p $GITHUB_WORKSPACE/clang
+        cd $GITHUB_WORKSPACE/clang
+        # Download a verified pre-built Android Clang 11/12 toolchain suitable for Linux 4.14 Kernels
+        wget https://googlesource.com
+        tar -xf clang-r416183b1.tar.gz
+        rm clang-r416183b1.tar.gz
+
+      
 
     - name: Download Kernel Source & Patches
       run: |
