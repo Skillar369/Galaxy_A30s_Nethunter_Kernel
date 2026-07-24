@@ -14,8 +14,9 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y git build-essential libncurses5-dev bison flex libssl-dev bc libelf-dev ccache cpio zip
-        - name: Download Clang Toolchain
-        run: |
+        
+    - name: Download Clang Toolchain
+      run: |
         mkdir -p $GITHUB_WORKSPACE/clang
         cd $GITHUB_WORKSPACE/clang
         wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+/refs/heads/main/clang-r416183b1.tar.gz
