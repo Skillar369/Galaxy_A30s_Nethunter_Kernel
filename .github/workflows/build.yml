@@ -20,13 +20,15 @@ jobs:
         git clone https://github.com/kdrag0n/proton-clang --depth=1 $GITHUB_WORKSPACE/clang
 
 
-    - name: Package with AnyKernel3
+        - name: Package with AnyKernel3
       run: |
        git clone https://github.com/SecureAuthCorp/AndroidKiller $GITHUB_WORKSPACE/AnyKernel3
-        cd $GITHUB_WORKSPACE/AnyKernel3 && zip -r9 nethunter-kernel-a30s.zip *
+       cd $GITHUB_WORKSPACE/AnyKernel3 && zip -r9 nethunter-kernel-a30s.zip *
+      env:
+        GIT_TERMINAL_PROMPT: 0
 
-    - name: Upload Flashable Zip
-      uses: actions/upload-artifact@v4
-      with:
+     - name: Upload Flashable Zip
+     uses: actions/upload-artifact@v4
+    with:
         name: NetHunter-Kernel-A30s
         path: ${{ github.workspace }}/AnyKernel3/nethunter-kernel-a30s.zip
