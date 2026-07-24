@@ -26,26 +26,23 @@ jobs:
 
       
 
-    - name: Download Toolchain
+    - name: Download Clang Toolchain
       run: |
-        # Download Proton Clang (highly stable for Android 4.14/4.19 Kernels)
-        git clone https://github.com --depth=1 $GITHUB_WORKSPACE/clang
+        mkdir -p $GITHUB_WORKSPACE/clang
+        cd $GITHUB_WORKSPACE/clang
+        # Download Android Clang toolchain
+        wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+/refs/heads/main/clang-r416183b1.tar.gz
+        tar -xf clang-r416183b1.tar.gz
+        rm clang-r416183b1.tar.gz
 
-    - name: Build Kernel
-      env:
-        ARCH: arm64
-        CC: clang
-        CROSS_COMPILE: ${{ github.workspace }}/clang/bin/aarch64-linux-gnu-
-        CROSS_COMPILE_ARM32: ${{ github.workspace }}/clang/bin/arm-linux-gnueabi-
+    - name: Download Proton Clang
       run: |
-        cd $GITHUB_WORKSPACE/kernel
-        make exynos7904_defconfig && make -j$(nproc)
+        git clone https://github.com/kdrag0n/proton-clang --depth=1 $GITHUB_WORKSPACE/clang
 
 
     - name: Package with AnyKernel3
       run: |
         git clone https://github.com $GITHUB_WORKSPACE/AnyKernel3
-        # cp $GITHUB_WORKSPACE/kernel/arch/arm64/boot/Image.gz-dtb $GITHUB_WORKSPACE/AnyKernel3/
         cd $GITHUB_WORKSPACE/AnyKernel3 && zip -r9 nethunter-kernel-a30s.zip *
 
     - name: Upload Flashable Zip
