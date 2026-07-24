@@ -14,26 +14,13 @@ jobs:
       run: |
         sudo apt update
         sudo apt install -y git build-essential libncurses5-dev bison flex libssl-dev bc libelf-dev ccache cpio zip
-
-    - name: Download Toolchain
-      run: |
+        - name: Download Clang Toolchain
+        run: |
         mkdir -p $GITHUB_WORKSPACE/clang
         cd $GITHUB_WORKSPACE/clang
-        # Download a verified pre-built Android Clang 11/12 toolchain suitable for Linux 4.14 Kernels
-        wget https://googlesource.com
-        tar -xf clang-r416183b1.tar.gz
-        rm clang-r416183b1.tar.gz
-
-      
-
-    - name: Download Clang Toolchain
-      run: |
-        mkdir -p $GITHUB_WORKSPACE/clang
-        cd $GITHUB_WORKSPACE/clang
-        # Download Android Clang toolchain
         wget https://android.googlesource.com/platform/prebuilts/clang/host/linux-x86/+/refs/heads/main/clang-r416183b1.tar.gz
         tar -xf clang-r416183b1.tar.gz
-        rm clang-r416183b1.tar.gz
+         rm clang-r416183b1.tar.gz
 
     - name: Download Proton Clang
       run: |
@@ -42,7 +29,7 @@ jobs:
 
     - name: Package with AnyKernel3
       run: |
-        git clone https://github.com $GITHUB_WORKSPACE/AnyKernel3
+       git clone https://github.com/SecureAuthCorp/AndroidKiller $GITHUB_WORKSPACE/AnyKernel3
         cd $GITHUB_WORKSPACE/AnyKernel3 && zip -r9 nethunter-kernel-a30s.zip *
 
     - name: Upload Flashable Zip
